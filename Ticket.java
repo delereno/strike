@@ -12,19 +12,13 @@ public class Ticket
     private ArrayList<Integer> ticketNums = new ArrayList<Integer>();
     private final int MIN = 0;
     private final int MAX = 40;
-    private final int SIZELIMIT = 5;
+    private int sizeLimit = 6;
+    private int lineNum = 4;
     private int randNum = 0;
     /**
      * Constructor for objects of class ticket
      */
-    public Ticket() { 
-        while (ticketNums.size() <= SIZELIMIT) {
-            randInt();
-            ticketNums.add(randNum);
-            if (Collections.frequency(ticketNums, randNum) > 1) {
-                ticketNums.remove(ticketNums.size()-1);
-            } 
-        }
+    public Ticket() {
     }
     /**
      * Generates a random value
@@ -34,10 +28,56 @@ public class Ticket
         return randNum;
     }
     /**
+     * Changes ticket size from 6 slots to 4 (Strike)
+     */
+    public void strikeTicket(){
+        sizeLimit = 3;
+    }
+    /**
+     * Creates a ticket list
+     */
+    public void randTicket(){
+        while (ticketNums.size() <= sizeLimit) {
+            ticketNums.add(randInt());
+            checkDupe();
+        }
+    }    
+    public void checkDupe(){
+        if (Collections.frequency(ticketNums, randNum) > 1) {
+                    ticketNums.remove(ticketNums.size()-1);
+                } 
+    }
+    /**
      * Returns the Array
-     * 
      */
     public ArrayList returnTicket(){
         return ticketNums;
+    }
+    /**
+     * Changes the number of lines
+     */
+    public void setLineNum(int lnNum){
+        lineNum = lnNum;
+    }
+    /**
+     * Creates 2D array to store multiple line tickets
+     */
+    public void createArray() {
+        ArrayList<ArrayList<Integer>> ticket = new ArrayList<>(lineNum);
+        for(int i=0; i < sizeLimit; i++) {
+            ticket.add(new ArrayList(sizeLimit)); //put linenum in brackets
+        }  
+        for (int i = 0; i < sizeLimit; i ++) {
+            for (int b = 0; b < lineNum; b++) {
+                int num = randInt();
+                ticket.get(b).add(num);
+            }    
+        }
+        for (int c = 0; c < sizeLimit; c++) {
+            System.out.println("");
+            for (int k = 0; k < lineNum; k++) {
+                System.out.print((ticket.get(k)).get(c) + "\t");
+            }
+        }
     }
 }

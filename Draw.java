@@ -18,13 +18,7 @@ public class Draw
      * Constructor for objects of class draw
      */
     public Draw() { 
-        while (drawNums.size() <= SIZELIMIT) {
-            randInt();
-            drawNums.add(randNum);
-            if (Collections.frequency(drawNums, randNum) > 1) {
-                drawNums.remove(drawNums.size()-1);
-            } 
-        }
+        createDraw();
     }
     /**
      * Generates a random value
@@ -32,6 +26,21 @@ public class Draw
     public int randInt(){
         randNum = (int) (Math.random() * MAX + MIN);
         return randNum;
+    }
+    /**
+     * Creates a draw list
+     */
+    public void createDraw(){
+        while (drawNums.size() <= SIZELIMIT) {
+            randInt();
+            drawNums.add(randNum);
+            checkDupe();
+        }
+    }    
+    public void checkDupe(){
+        if (Collections.frequency(drawNums, randNum) > 1) {
+                    drawNums.remove(drawNums.size()-1);
+                } 
     }
     /**
      * Returns the Array
