@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Scanner;
 /**
  * Creates a ticket object
  *
@@ -9,12 +10,16 @@ import java.util.Collections;
 public class Ticket
 {
     // instance variables - replace the example below with your own
-    private ArrayList<Integer> ticketNums = new ArrayList<Integer>();
+    
     private final int MIN = 0;
     private final int MAX = 40;
-    private int sizeLimit = 6;
-    private int lineNum = 4;
+    private int numLimit = 5;
+    private int lineNum = 3;
     private int randNum = 0;
+    private int pick;
+    ArrayList<ArrayList<Integer>> ticket = new ArrayList<>(lineNum);
+    ArrayList<Integer> line = new ArrayList<>(lineNum);
+    private Scanner scanner = new Scanner(System.in);
     /**
      * Constructor for objects of class ticket
      */
@@ -31,53 +36,78 @@ public class Ticket
      * Changes ticket size from 6 slots to 4 (Strike)
      */
     public void strikeTicket(){
-        sizeLimit = 3;
+        numLimit = 3;
     }
-    /**
-     * Creates a ticket list
-     */
-    public void randTicket(){
-        while (ticketNums.size() <= sizeLimit) {
-            ticketNums.add(randInt());
-            checkDupe();
-        }
-    }    
-    public void checkDupe(){
-        if (Collections.frequency(ticketNums, randNum) > 1) {
-                    ticketNums.remove(ticketNums.size()-1);
-                } 
-    }
-    /**
-     * Returns the Array
-     */
-    public ArrayList returnTicket(){
-        return ticketNums;
-    }
+    
     /**
      * Changes the number of lines
      */
     public void setLineNum(int lnNum){
         lineNum = lnNum;
     }
+    
+    // /**
+     // * Creates a ticket list REDO THIS
+     // */
+    // public void randTicket(){
+        // while (ticket.size() <= numLimit) {
+            // ticket.add(randInt());
+            // checkDupe();
+        // }
+    // }    
+    
+
+   
+
+    
     /**
-     * Creates 2D array to store multiple line tickets
+     * Adds line to 2D array
      */
-    public void createArray() {
-        ArrayList<ArrayList<Integer>> ticket = new ArrayList<>(lineNum);
-        for(int i=0; i < sizeLimit; i++) {
-            ticket.add(new ArrayList(sizeLimit)); //put linenum in brackets
-        }  
-        for (int i = 0; i < sizeLimit; i ++) {
-            for (int b = 0; b < lineNum; b++) {
-                int num = randInt();
-                ticket.get(b).add(num);
-            }    
+    public void addLine() {
+        ticket.add(new ArrayList<>(line));
+    }
+    
+    /**
+     * Creates a single line
+     */
+    public void createLine() {
+        while (line.size() <= numLimit) {
+            System.out.println("What number would you like to pick between 1-40?");
+            pick = Integer.valueOf(scanner.nextLine());
+            checkNum();
+        }    
+                // int pick = Integer.valueOf(scanner.nextLine());
+    }
+    /**
+     * Clears the line array
+     */
+    public void clearLine() {
+        line.clear();
+    }
+    
+    /**
+     * Checks if int is between 0 and 40
+     */
+    public void checkNum() {
+        if (pick >= 0 && pick <= 40) {
+            line.add(pick); 
+            checkDupe();
         }
-        for (int c = 0; c < sizeLimit; c++) {
-            System.out.println("");
-            for (int k = 0; k < lineNum; k++) {
-                System.out.print((ticket.get(k)).get(c) + "\t");
-            }
+        else {
+            System.out.println("Please pick a number between 1-40");
         }
+    }
+    
+    public void checkDupe(){
+        if (Collections.frequency(line, pick) > 1) {
+            System.out.println("That number is already in the line");
+            line.remove(line.size()-1);
+        } 
+    }
+    /**
+     * Returns the Array
+     */
+    public ArrayList returnTicket(){
+        return ticket;
     }
 }
