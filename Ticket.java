@@ -15,10 +15,14 @@ public class Ticket
     private final int MAX = 40;
     private int numLimit = 5;
     private int lineNum = 3;
+    private int strikeNum = 0;
     private int randNum = 0;
     private int pick;
-    ArrayList<ArrayList<Integer>> ticket = new ArrayList<>(lineNum);
-    ArrayList<Integer> line = new ArrayList<>(lineNum);
+    private boolean running = true;
+    ArrayList<ArrayList<Integer>> lotto = new ArrayList<>();
+    ArrayList<ArrayList<Integer>> strike = new ArrayList<>();
+    ArrayList<Integer> line = new ArrayList<>(numLimit);
+    ArrayList<Integer> powerball = new ArrayList<>();
     private Scanner scanner = new Scanner(System.in);
     /**
      * Constructor for objects of class ticket
@@ -40,10 +44,19 @@ public class Ticket
     }
     
     /**
+     * Changes ticket size from 4 slots to 6 (Lotto)
+     */
+    public void lottoTicket(){
+        numLimit = 5;
+    }
+    /**
      * Changes the number of lines
      */
     public void setLineNum(int lnNum){
         lineNum = lnNum;
+    }
+    public void setStrikeNum(int lnNum){
+        strikeNum = lnNum;
     }
     
     // /**
@@ -64,7 +77,7 @@ public class Ticket
      * Adds line to 2D array
      */
     public void addLine() {
-        ticket.add(new ArrayList<>(line));
+        lotto.add(new ArrayList<>(line));
     }
     
     /**
@@ -74,7 +87,8 @@ public class Ticket
         while (line.size() <= numLimit) {
             System.out.println("What number would you like to pick between 1-40?");
             pick = Integer.valueOf(scanner.nextLine());
-            checkNum();
+            checkNum(line, 40);
+            checkDupe();
         }    
                 // int pick = Integer.valueOf(scanner.nextLine());
     }
@@ -88,13 +102,14 @@ public class Ticket
     /**
      * Checks if int is between 0 and 40
      */
-    public void checkNum() {
-        if (pick >= 0 && pick <= 40) {
-            line.add(pick); 
-            checkDupe();
+    public boolean checkNum(ArrayList list, int max) {
+        if (pick >= MIN && pick <= max) {
+            list.add(pick);
+            return false;
         }
         else {
-            System.out.println("Please pick a number between 1-40");
+            System.out.println("Please pick a number between 0-"+max+"");
+            return true;
         }
     }
     
@@ -105,9 +120,59 @@ public class Ticket
         } 
     }
     /**
-     * Returns the Array
+     * Returns the lotto Array
      */
     public ArrayList returnTicket(){
-        return ticket;
+        return lotto;
     }
+    
+    /**
+     * Returns the powerball Array
+     */
+    public ArrayList returnPowerball(){
+        return powerball;
+    }
+    
+    /**
+     * Returns the strike Array
+     */
+    public ArrayList returnStrike(){
+        return strike;
+    }
+    /**
+     * Returns the lotto line num
+     */
+    public int returnLineNum(){
+        return lineNum;
+    }
+    /**
+     * Returns the strike line num
+     */
+    public int returnStrikeNum(){
+        return strikeNum;
+    }
+    
+    /**
+     * Returns the number limit
+     */
+    public int returnNumLimit   (){
+        return numLimit;
+    }
+    public void powerball() {
+        running = true;
+        while (running) {
+            System.out.println("What number would you like to pick between 1-10?");
+            pick = Integer.valueOf(scanner.nextLine());
+            running = checkNum(powerball,10); 
+        }
+    }
+    
+    public void noPowerball() {
+        powerball.add(-1);
+    }
+    
+    public void addStrike() {
+        strike.add(new ArrayList<>(line));
+    }
+    
 }
