@@ -12,12 +12,13 @@ public class Ticket
     // instance variables - replace the example below with your own
     
     private final int MIN = 0;
-    private final int MAX = 40;
     private int numLimit = 5;
     private int lineNum = 3;
     private int strikeNum = 0;
     private int randNum = 0;
     private int pick;
+    private boolean playStrike = false;
+    private boolean playPowerball = false;
     private boolean running = true;
     ArrayList<ArrayList<Integer>> lotto = new ArrayList<>();
     ArrayList<ArrayList<Integer>> strike = new ArrayList<>();
@@ -32,9 +33,15 @@ public class Ticket
     /**
      * Generates a random value
      */
-    public int randInt(){
-        randNum = (int) (Math.random() * MAX + MIN);
+    public int randInt(int max){
+        randNum = (int) (Math.random() * max + MIN);
         return randNum;
+    }
+    
+    public void scrub(){
+        lotto.clear();
+        strike.clear();
+        powerball.clear();  
     }
     /**
      * Changes ticket size from 6 slots to 4 (Strike)
@@ -59,19 +66,78 @@ public class Ticket
         strikeNum = lnNum;
     }
     
-    // /**
-     // * Creates a ticket list REDO THIS
-     // */
-    // public void randTicket(){
-        // while (ticket.size() <= numLimit) {
-            // ticket.add(randInt());
-            // checkDupe();
-        // }
-    // }    
+    public void playStrike(){
+        playStrike = true;
+    }
     
-
-   
-
+    public void noPlayStrike(){
+        playStrike = false;
+    }
+    
+    public boolean checkStrike(){
+        return playStrike;
+    }
+    
+    public void playPowerball(){
+        playPowerball = true;
+    }
+    
+    public void noPlayPowerball(){
+        playPowerball = false;
+    }
+    
+    public boolean checkPowerball(){
+        return playPowerball;
+    }
+    /**
+     * Creates a ticket list 
+     */
+    public void randLine(){
+        while (line.size() <= numLimit) {
+            int randnum = randInt(40);
+            line.add(randnum);
+            checkDupe(randnum);
+        }
+    }  
+    /**
+     * Creates random powerball numbers
+     * kinda unneccesary
+     */
+    public void randPowerball() {
+        while (powerball.size() <= lineNum) {
+            int randnum = randInt(10);
+            powerball.add(randnum);
+        }
+    }  
+    public void printLotto(){
+        for (int c = 0; c <= 5; c++) {
+                System.out.println("");
+                for (int k = 0; k < lineNum; k++) {
+                    System.out.print((lotto.get(k)).get(c) + "\t");
+                  
+                }
+            }
+        }
+    public void printPowerball(){    
+        for (int k = 0; k < lineNum; k++) {
+                if (! powerball.get(k).equals(-1) ){
+                    System.out.print(powerball.get(k) + "\t");
+                }
+                
+                else if ( powerball.get(k).equals(-1) ){
+                    System.out.print("" + "\t");
+                }
+            }
+            
+    }
+    public void printStrike() { 
+        for (int c = 0; c <= 3; c++) {
+            System.out.println("");
+            for (int k = 0; k < strikeNum; k++) {
+                System.out.print((strike.get(k)).get(c) + "\t");
+            }
+        }
+    }
     
     /**
      * Adds line to 2D array
@@ -88,7 +154,7 @@ public class Ticket
             System.out.println("What number would you like to pick between 1-40?");
             pick = Integer.valueOf(scanner.nextLine());
             checkNum(line, 40);
-            checkDupe();
+            checkDupe(pick);
         }    
                 // int pick = Integer.valueOf(scanner.nextLine());
     }
@@ -113,8 +179,8 @@ public class Ticket
         }
     }
     
-    public void checkDupe(){
-        if (Collections.frequency(line, pick) > 1) {
+    public void checkDupe(int num){
+        if (Collections.frequency(line, num) > 1) {
             System.out.println("That number is already in the line");
             line.remove(line.size()-1);
         } 
