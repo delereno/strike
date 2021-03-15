@@ -20,10 +20,10 @@ public class Ticket
     private boolean playStrike = false;
     private boolean playPowerball = false;
     private boolean running = true;
-    ArrayList<ArrayList<Integer>> lotto = new ArrayList<>();
-    ArrayList<ArrayList<Integer>> strike = new ArrayList<>();
-    ArrayList<Integer> line = new ArrayList<>(numLimit);
-    ArrayList<Integer> powerball = new ArrayList<>();
+    ArrayList<ArrayList<Integer>> lotto = new ArrayList<ArrayList<Integer>>();
+    ArrayList<ArrayList<Integer>> strike = new ArrayList<ArrayList<Integer>>();
+    ArrayList<Integer> line = new ArrayList<Integer>();
+    ArrayList<Integer> powerball = new ArrayList<Integer>();
     private Scanner scanner = new Scanner(System.in);
     /**
      * Constructor for objects of class ticket
@@ -110,13 +110,12 @@ public class Ticket
         }
     }  
     public void printLotto(){
-        for (int c = 0; c <= 5; c++) {
-                System.out.println("");
-                for (int k = 0; k < lineNum; k++) {
-                    System.out.print((lotto.get(k)).get(c) + "\t");
-                  
-                }
+        for (int i = 0; i < lotto.size(); i++) {
+            for (int c = 0; c < lotto.get(i).size(); c++ ) {
+                System.out.print(lotto.get(i).get(c) + "\t");
             }
+            System.out.println("");
+        }
         }
     public void printPowerball(){    
         for (int k = 0; k < lineNum; k++) {
@@ -131,11 +130,11 @@ public class Ticket
             
     }
     public void printStrike() { 
-        for (int c = 0; c <= 3; c++) {
-            System.out.println("");
-            for (int k = 0; k < strikeNum; k++) {
-                System.out.print((strike.get(k)).get(c) + "\t");
+        for (int i = 0; i < strike.size(); i++) {
+            for (int c = 0; c < strike.get(i).size(); c++ ) {
+                System.out.print(strike.get(i).get(c) + "\t");
             }
+            System.out.println("");
         }
     }
     
@@ -143,7 +142,7 @@ public class Ticket
      * Adds line to 2D array
      */
     public void addLine() {
-        lotto.add(new ArrayList<>(line));
+        lotto.add(new ArrayList<Integer>(line));
     }
     
     /**
@@ -224,7 +223,7 @@ public class Ticket
     public int returnNumLimit   (){
         return numLimit;
     }
-    public void powerball() {
+    public void powerball() { //check if poewrball can be 0
         running = true;
         while (running) {
             System.out.println("What number would you like to pick between 1-10?");
@@ -238,7 +237,7 @@ public class Ticket
     }
     
     public void addStrike() {
-        strike.add(new ArrayList<>(line));
+        strike.add(new ArrayList<Integer>(line));
     }
     
 }

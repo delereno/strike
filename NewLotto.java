@@ -2,57 +2,80 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.Collections;
 /**
- * Write a description of class newLotto here.
+ * Creates a lotto ticket, compares it to a lotto draw to decide winnings
  *
- * @author (your name)
- * @version (a version number or a date)
+ * @author Del Huang
+ * @version 15/03/21
  */
-public class NewLotto
-{
+public class NewLotto {
     static Scanner scanner = new Scanner(System.in);
     static boolean running = true;
     static ArrayList<ArrayList<Integer>> lotto = new ArrayList<>();
     static ArrayList<Integer> powerball = new ArrayList<Integer>();
     static ArrayList<ArrayList<Integer>> strike = new ArrayList<>();
-    public static void main (String[]args) {
-            
-            
-        Ticket ticket = new Ticket();
-        
-        Draw draw = new Draw();
-        while (running) {
-            ticket.scrub();
+    public static void main (String[]args) {     
+            // Creates lotto ticket and draw objects
+            Ticket ticket = new Ticket();       
+            Draw draw = new Draw();
             while (running) {
-                System.out.println("Welcome to Lotto!\n\nWould you like to:\nChoose your lines\nPlay with dips\nSpecial game!");
-                String choice = scanner.nextLine();
-                choice = choice.substring(0,1).toUpperCase() + choice.substring(1).toLowerCase();
-                if (choice.equals("Choose")){
-                    chooseLine(ticket, draw); break;
+                ticket.scrub();
+                while (running) {
+                    System.out.println("Welcome to Lotto!\n\nWould you like to:\nChoose your lines\nPlay with dips\nSpecial game!");
+                    String choice = scanner.nextLine();
+                    choice = choice.substring(0,1).toUpperCase() + choice.substring(1).toLowerCase();
+                    if (choice.equals("Choose")){
+                        chooseLine(ticket, draw); break;
+                    }
+                    else if (choice.equals("Dips")) {
+                        dips(ticket, draw); break;
+                    }
+                    else if (choice.equals("Special")) {
+                        special(ticket, draw); break;
+                    }
+                    else {
+                        System.out.println("Please enter a valid input.");
+                    }
                 }
-                else if (choice.equals("Dips")) {
-                    dips(ticket, draw); break;
+                
+                ArrayList<ArrayList<Integer>> strike = ticket.returnStrike();
+                ArrayList<ArrayList<Integer>> lotto = ticket.returnTicket();
+                ArrayList<Integer> powerball = ticket.returnPowerball();
+    
+                System.out.println("---------Lotto Ticket---------");
+                for (int i = 0; i < lotto.size(); i++) {
+                    for (int c = 0; c < lotto.get(i).size(); c++ ) {
+                        System.out.print(lotto.get(i).get(c) + "\t");
+                    }
+                    if (ticket.checkPowerball()) {
+                        System.out.print(powerball.get(i));
+                    }
+                    System.out.println("");
                 }
-                else if (choice.equals("Special")) {
-                    special(ticket, draw); break;
+                if (ticket.checkStrike()) {
+                    System.out.println("---------Strike Ticket---------");
+                    for (int i = 0; i < strike.size(); i++) {
+                        for (int c = 0; c < strike.get(i).size(); c++ ) {
+                            System.out.print(strike.get(i).get(c) + "\t");
+                        }
+                        System.out.println("");
+                    }
                 }
-                else {
-                    System.out.println("Please enter a valid input.");
-                }
+                // if (ticket.checkPowerball()) {
+                    // ticket.printPowerball();
+                // }
+                
+                // if (ticket.checkStrike()) {
+                    // ticket.printStrike();
+                // }
+                
+                ticket.noPlayStrike();
+                ticket.noPlayPowerball();
+                lottoDraw(ticket,draw);
+                System.out.println("");
+                checkTicket(ticket,draw);
             }
-            
-            
-            ticket.printLotto();
-            if (ticket.checkPowerball()) {
-                ticket.printPowerball();
-            }
-            if (ticket.checkStrike()) {
-                ticket.printStrike();
-            }
-            ticket.noPlayStrike();
-            lottoDraw(ticket,draw);
-            System.out.println("");
         }
-    }
+    
     public static void chooseLine(Ticket ticket, Draw draw) {
         //asks user how many lotto lines they want, sets as line amount
         while (running) {
@@ -81,17 +104,17 @@ public class NewLotto
             System.out.println("Will you add powerball to this line?");
             String answer = scanner.nextLine();
             answer = answer.substring(0,1).toUpperCase() + answer.substring(1).toLowerCase();
-                if (answer.equals("Yes")) {
-                    ticket.powerball();
-                    break;
-                }
-                else if (answer.equals("No")) {
-                    ticket.noPowerball();
-                    break;
-                }
-                else {
-                    System.out.println("Please enter a valid input.");
-                }
+            if (answer.equals("Yes")) {
+                ticket.powerball();
+                break;
+            }
+            else if (answer.equals("No")) {
+                ticket.noPowerball();
+                break;
+            }
+            else {
+                System.out.println("Please enter a valid input.");
+            }
             }
         }  
         
@@ -267,45 +290,114 @@ public class NewLotto
         draw.createLine(5);
         draw.drawLotto();
         draw.drawPowerball();
+        draw.drawBonusball();
         ArrayList<Integer> lottoMatch = draw.returnLotto();
         ArrayList<Integer> strikeMatch = draw.returnStrike();
-        for (int k = 0; k <= 3; k++) {
-                System.out.print(strikeMatch.get(k) + "\t");
-            }
+        System.out.println("\nThis week's lotto draw is...");
         for (int k = 0; k <= 5; k++) {
                 System.out.print(lottoMatch.get(k) + "\t");
             }
+        System.out.println("\nThis week's strike draw is...");
+        for (int k = 0; k <= 3; k++) {
+                System.out.print(strikeMatch.get(k) + "\t");
+            }
+        System.out.println("\nThis week's powerball draw is...\n" +
+            draw.returnPowerball());
+        System.out.println("\nThis week's bonus ball draw is...\n" +
+            draw.returnBonusball());
+    }
+    public static void checkTicket (Ticket ticket, Draw draw){
+        ArrayList<ArrayList<Boolean>> ticketMatch = new ArrayList<>();
+        ArrayList<ArrayList<Boolean>> strikeMatch = new ArrayList<>();
+        ArrayList<Boolean> matchCheck = new ArrayList<Boolean>();
+        ArrayList<Boolean> strikeMatchCheck = new ArrayList<Boolean>();
+        ArrayList<Boolean> powerballMatchCheck = new ArrayList<Boolean>();
+        ArrayList<Integer> lottoDraw = draw.returnLotto();
+        ArrayList<Integer> strikeDraw = draw.returnStrike();
+        ArrayList<ArrayList<Integer>> strike = ticket.returnStrike();
+        ArrayList<ArrayList<Integer>> lotto = ticket.returnTicket();
+        boolean bonusball = false;
+        for (int i = 0; i < lotto.size(); i++) {
+            for (int c = 0; c < lotto.get(i).size(); c++ ) {
+                if (lotto.get(i).get(c).equals(lottoDraw.get(c))) {
+                    matchCheck.add(true);
+                }
+                else {
+                    matchCheck.add(false);
+                }
+            }
+            ticketMatch.add(new ArrayList(matchCheck));
+            matchCheck.clear();    
+        }
+        for (int i = 0; i < strike.size(); i++) {
+            for (int c = 0; c < strike.get(i).size(); c++ ) {
+                if (strike.get(i).get(c).equals(strikeDraw.get(c))) {
+                    strikeMatchCheck.add(true);
+                }
+                else {
+                    strikeMatchCheck.add(false);
+                }
+            }
+            strikeMatch.add(new ArrayList(strikeMatchCheck));
+            strikeMatchCheck.clear();    
+        }
+        System.out.println("");
+        for (int i = 0; i < ticketMatch.size(); i++) {
+            for (int c = 0; c < ticketMatch.get(i).size(); c++ ) {
+                System.out.print(ticketMatch.get(i).get(c) + "\t");
+            }
+            System.out.println("");
+        }
+        for (int i = 0; i < strikeMatch.size(); i++) {
+            for (int c = 0; c < strikeMatch.get(i).size(); c++ ) {
+                System.out.print(strikeMatch.get(i).get(c) + "\t");
+            }
+            System.out.println("");
+        }
+        
+        for (int i = 0; i < lotto.size(); i++) {
+            int matchNum = Collections.frequency(ticketMatch.get(i), true);
+            if (ticketMatch.get(i).contains(draw.returnBonusball())) {
+                bonusball = true;
+            }
+            if (matchNum == 3) {
+                System.out.println("Line "+(i+1)+" wins Division 7");
+            }
+            else if (matchNum == 3 && bonusball) {
+                System.out.println("Line "+(i+1)+" wins Division 6");
+            }
+            else if (matchNum == 4) {
+                System.out.println("Line "+(i+1)+" wins Division 5");
+            }
+            else if (matchNum == 4 && bonusball) {
+                System.out.println("Line "+(i+1)+" wins Division 4");
+            }
+            else if (matchNum == 5) {
+                System.out.println("Line "+(i+1)+" wins Division 3");
+            }
+            else if (matchNum == 5 && bonusball) {
+                System.out.println("Line "+(i+1)+" wins Division 2");
+            }
+            else if (matchNum == 6) {
+                System.out.println("Line "+(i+1)+" wins Division 1");
+            }
+        }
     }
     public static void special(Ticket ticket, Draw draw) {
-        // Repeat strike line until strike 4, record results
-        
-        // lotto repeat until division 1 and powerball win, record results
-        
-        //favourites menu - set up favorites, favourites vs rand
-
+        while (running) {
+            System.out.println("What would you like to simulate?\nA.Play until Strike 4!\nB.Play until Division 1 Powerball\nC.Favourite line vs. random line!");
+            String choice = scanner.nextLine();
+            choice = choice.substring(0,1).toUpperCase() + choice.substring(1).toLowerCase();
+            // Repeat strike line until strike 4, record results
+            if (choice.equals("A")){
+            }
+            // lotto repeat until division 1 and powerball win, record results
+            else if (choice.equals("B")){
+            }
+            //favourites menu - set up favorites, favourites vs rand
+            else if (choice.equals("C")){
+            }
+        }
     }
-    // public static void checkTicket(Ticket ticket, Draw draw) {
-        // ArrayList<Integer> ticketNums = ticket.returnTicket();
-        // for (int i = 0; i < ticketNums.size(); i++) {
-            // System.out.print(ticketNums.get(i) + "\t");
-        // }
-        // ArrayList<Integer> drawNums = draw.returnDraw();
-        // System.out.println("");
-        // for (int i = 0; i < drawNums.size(); i++) {
-            // System.out.print(drawNums.get(i) + "\t");
-        // }
-        // ArrayList<Boolean> ticketMatch = new ArrayList<Boolean>();
-        // System.out.println("");
-        // for (int i = 0; i < ticketNums.size(); i++) {
-            // if (ticketNums.get(i).equals(drawNums.get(i))) {
-                // ticketMatch.add(true);
-            // }
-            // else {
-                // ticketMatch.add(false);
-            // }
-        // }
-        // for (int i = 0; i < drawNums.size(); i++) {
-            // System.out.print(ticketMatch.get(i) + "\t");
-        // }
-    // }
+   
 }

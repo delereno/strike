@@ -7,18 +7,15 @@ import java.util.Scanner;
  * @author Del Huang
  * @version 12/03/21
  */
-public class Draw
-{
-    // instance variables - replace the example below with your own
-    
+public class Draw {
+    // instance variables 
     private final int MIN = 0;
-    
     private int powerball = 0;
-    private int bonusBall = 0;
+    private int bonusball = 0;
     private int randNum = 0;
     private boolean running = true;
-    ArrayList<Integer> line = new ArrayList<>();
-    ArrayList<Integer> lotto = new ArrayList<>();
+    ArrayList<Integer> line = new ArrayList<Integer>();
+    ArrayList<Integer> lotto = new ArrayList<Integer>();
     ArrayList<Integer> strike = new ArrayList<>();
     private Scanner scanner = new Scanner(System.in);
     /**
@@ -42,6 +39,14 @@ public class Draw
     }
     public void drawPowerball() {
         powerball = randInt(10);
+    }
+    public void drawBonusball() {
+        while (running) {
+            bonusball = randInt(40);
+            if (!lotto.contains(bonusball)){
+            break;
+            }
+        }
     }
     public void checkDupe(int num){
         if (Collections.frequency(line, num) > 1) {
@@ -79,5 +84,8 @@ public class Draw
     }
     public int returnPowerball(){
         return powerball;
+    }
+    public int returnBonusball(){
+        return bonusball;
     }
  }
